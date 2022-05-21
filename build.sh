@@ -1,1 +1,0 @@
-g++ -g lolcat.c include/*.cc include/ansiescape/*.cc -o build/lolcat -I include

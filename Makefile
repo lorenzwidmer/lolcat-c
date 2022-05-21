@@ -1,31 +1,27 @@
+IDIR =./include
+CC=g++
+CFLAGS=-I$(IDIR)
 
-LOLCAT_SRC ?= lolcat.c
-CFLAGS ?= -std=c11 -Wall -g
+ODIR=./
+LDIR =./lib
 
-DESTDIR ?= ./build/
+LIBS=-lm
 
-all: lolcat-static
+_DEPS = anisescape/**.cc anisescape.cc
+DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
-ifeq ($(shell uname -s),Darwin)
-	LOLCAT_SRC += memorymapping/src/fmemopen.c
-	CFLAGS += -Imemorymapping/src
-endif
+_OBJ = include/*.cc include/ansiescape/*.cc
+OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
-.PHONY: install clean static
 
-static: lolcat-static
+$(ODIR)/%.o: %.c $(DEPS)
+	$(CC) -c -o $@ $< $(CFLAGS)
 
-lolcat-static: lolcat.c
-	gcc -c $(CFLAGS) -I$(MUSLDIR)/include -o lolcat.o $<
-	gcc -s -g -nostartfiles -nodefaultlibs -nostdinc -static -ffunction-sections -fdata-sections -Wl,--gc-sections -o $@ lolcat.o $(MUSLDIR)/lib/crt1.o $(MUSLDIR)/lib/libc.a
+lolcat: $(OBJ)
+	$(CC) -g $@.c $^ $(CFLAGS) $(LIBS)
 
-lolcat: $(LOLCAT_SRC)
-	gcc $(CFLAGS) -o $@ $^
-
-install: lolcat-static censor-static
-	install lolcat-static $(DESTDIR)/lolcat
+.PHONY: clean
 
 clean:
-	rm -f lolcat lolcat-static.o lolcat-static
-	# make -C musl clean
+	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~ 
 
