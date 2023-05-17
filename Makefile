@@ -1,27 +1,26 @@
-IDIR =./include
+BUILDDIR=./build
+
 CC=g++
 CFLAGS=-I$(IDIR)
 
 ODIR=./
 LDIR =./lib
+IDIR =./include
 
 LIBS=-lm
-
-_DEPS = anisescape/**.cc anisescape.cc
-DEPS = $(patsubst %,$(IDIR)/%,$(_DEPS))
 
 _OBJ = include/*.cc include/ansiescape/*.cc
 OBJ = $(patsubst %,$(ODIR)/%,$(_OBJ))
 
 
-$(ODIR)/%.o: %.c $(DEPS)
+$(ODIR)/%.o: %.c
 	$(CC) -c -o $@ $< $(CFLAGS)
 
 lolcat: $(OBJ)
-	$(CC) -g $@.c $^ $(CFLAGS) $(LIBS)
+	$(CC) -o $(BUILDDIR)/lolcat -g $@.c $^ $(CFLAGS) $(LIBS)
 
 .PHONY: clean
 
 clean:
-	rm -f $(ODIR)/*.o *~ core $(INCDIR)/*~ 
+	rm -f $(ODIR)/*.o *~ $(IDIR)/*~ 
 
